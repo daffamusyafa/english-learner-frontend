@@ -1,22 +1,35 @@
 stages:
-  - build
+  - build_and_push
 
-variables:
-  IMAGE_TAG_FRONTEND: $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA
-  # --- PERUBAHAN DI SINI (di nilai variabel yang akan Anda set di GitLab) ---
-  # Pastikan Anda set variabel PROD_API_URL di GitLab CI/CD Settings
-  # dengan nilai: "http://<IP_VM_ANDA>:5000" 
-
-build_frontend:
-  stage: build
-  image: docker:20.10.16
+# --- JOB: BUILD & PUSH KE DOCKER HUB ---
+push_to_dockerhub:
+  stage: build_and_push
+  image: docker:20.10
   services:
-    - docker:20.10.16-dind
+    - docker:20.10-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    # Nama image di Docker Hub
+    IMAGE_NAME: $DOCKERHUB_USERNAME/english-learner-frontend
+  before_script:
+    - echo "Logging in to Docker Hub..."
+    # INI BAGIAN PENTING YANG BERBEDA DENGAN LOG ANDA
+    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+    - echo "Login successful."
   script:
-    - echo "Building frontend Docker image..."
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    # 'IMAGE_TAG' akan diisi oleh 'rules' di bawah
+    - echo "Building image $IMAGE_NAME:$IMAGE_TAG"
     - |
       docker build \
         --build-arg REACT_APP_API_URL=${PROD_API_URL} \
-        -t $IMAGE_TAG_FRONTEND .
-    - docker push $IMAGE_TAG_FRONTEND
+        -t $IMAGE_NAME:$IMAGE_TAG .
+    - echo "Pushing image $IMAGE_NAME:$IMAGE_TAG"
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      variables:
+        IMAGE_TAG: "build-$CI_PIPELINE_IID"
+    - if: $CI_COMMIT_TAG
+      variables:
+        IMAGE_TAG: $CI_COMMIT_TAG
