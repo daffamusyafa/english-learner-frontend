@@ -7,18 +7,19 @@ push_to_dockerhub:
   image: docker:20.10
   services:
     - docker:20.10-dind
+  
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
-    # Nama image di Docker Hub
     IMAGE_NAME: $DOCKERHUB_USERNAME/english-learner-frontend
+  
   before_script:
     - echo "Logging in to Docker Hub..."
-    # INI BAGIAN PENTING YANG BERBEDA DENGAN LOG ANDA
+    # INI ADALAH PERINTAH YANG BENAR
     - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
     - echo "Login successful."
+    
   script:
-    # 'IMAGE_TAG' akan diisi oleh 'rules' di bawah
     - echo "Building image $IMAGE_NAME:$IMAGE_TAG"
     - |
       docker build \
@@ -26,6 +27,7 @@ push_to_dockerhub:
         -t $IMAGE_NAME:$IMAGE_TAG .
     - echo "Pushing image $IMAGE_NAME:$IMAGE_TAG"
     - docker push $IMAGE_NAME:$IMAGE_TAG
+    
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       variables:
