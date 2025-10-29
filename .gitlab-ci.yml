@@ -1,7 +1,6 @@
 # Tentukan tahapan (stages) dari pipeline Anda
 stages:
   - build
-  - deploy
 
 # -------------------------------------------------------------------
 # TAHAP 1: BUILD & PUSH IMAGE (Untuk Front-End)
@@ -44,57 +43,3 @@ build_and_push_to_dockerhub:
   # Hanya jalankan di branch 'master' (atau 'main', sesuaikan)
   only:
     - master
-
-# -------------------------------------------------------------------
-# TAHAP 2: DEPLOY KE VM (Untuk Front-End)
-# -------------------------------------------------------------------
-deploy_to_vm:
-  stage: deploy
-  
-  # Gunakan image yang memiliki SSH client
-  image: alpine:latest
-
-  # Perintah ini dijalankan sebelum 'script' utama
-  # Bagian ini sama persis, karena hanya menyiapkan koneksi SSH
-  before_script:
-    - 'command -v ssh-agent >/dev/null || (apk add --update openssh-client)'
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-
-  # Perintah utama untuk deployment
-  script:
-    - echo "Melakukan deployment ke VM di $SSH_HOST..."
-    
-    # Gunakan Variabel CI/CD: $SSH_USER, $SSH_HOST
-    - |
-      ssh ${SSH_USER}@${SSH_HOST} "
-        echo 'Berhasil terhubung ke VM...'
-        
-        # 1. GANTI INI: Pindah ke direktori proyek FE Anda di VM
-        #    (yang berisi file docker-compose.yml untuk FE)
-        cd /var/www/my-frontend-project
-        
-        echo 'Menarik image Docker FE terbaru dari Docker Hub...'
-        # 2. GANTI INI: Pastikan nama image ini SAMA dengan
-        #    variabel $DOCKERHUB_IMAGE di tahap build
-        docker pull daffamusyafa/english-learner-frontend:latest
-        
-        echo 'Merestart container FE dengan image baru...'
-        # 3. Jalankan ulang container Anda (asumsi pakai docker-compose)
-        docker-compose up -d --force-recreate
-        
-        # 4. (Opsional) Bersihkan image lama yang tidak terpakai
-        docker image prune -f
-        
-        echo 'Deployment FE selesai!'
-      "
-      
-  # Tentukan aturan kapan job ini harus dijalankan
-  rules:
-    # Hanya jalankan job ini ketika ada commit ke branch 'master'
-    # Ini harus SAMA dengan job 'build' agar berjalan berurutan
-    - if: $CI_COMMIT_BRANCH == "master"
