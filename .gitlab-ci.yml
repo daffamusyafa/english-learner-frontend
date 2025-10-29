@@ -1,0 +1,22 @@
+stages:
+  - build
+
+variables:
+  IMAGE_TAG_FRONTEND: $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA
+  # --- PERUBAHAN DI SINI (di nilai variabel yang akan Anda set di GitLab) ---
+  # Pastikan Anda set variabel PROD_API_URL di GitLab CI/CD Settings
+  # dengan nilai: "http://<IP_VM_ANDA>:5000" 
+
+build_frontend:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - echo "Building frontend Docker image..."
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - |
+      docker build \
+        --build-arg REACT_APP_API_URL=${PROD_API_URL} \
+        -t $IMAGE_TAG_FRONTEND .
+    - docker push $IMAGE_TAG_FRONTEND
