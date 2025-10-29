@@ -1,37 +1,100 @@
+# Tentukan tahapan (stages) dari pipeline Anda
 stages:
-  - build_and_push
+  - build
+  - deploy
 
-# --- JOB: BUILD & PUSH KE DOCKER HUB ---
-push_to_dockerhub:
-  stage: build_and_push
+# -------------------------------------------------------------------
+# TAHAP 1: BUILD & PUSH IMAGE (Untuk Front-End)
+# -------------------------------------------------------------------
+# Mendefinisikan job untuk build dan push
+build_and_push_to_dockerhub:
+  stage: build
+  
+  # Menyediakan 'docker' CLI
   image: docker:20.10
+  
+  # Menjalankan 'docker' engine (daemon)
   services:
     - docker:20.10-dind
   
   variables:
+    # Memberi tahu 'docker' CLI di mana menemukan 'docker' engine
     DOCKER_HOST: tcp://docker:2375
+    # Menonaktifkan enkripsi (TLS)
     DOCKER_TLS_CERTDIR: ""
-    IMAGE_NAME: $DOCKERHUB_USERNAME/english-learner-frontend
-  
-  before_script:
-    - echo "Logging in to Docker Hub..."
-    # INI ADALAH PERINTAH YANG BENAR
-    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-    - echo "Login successful."
-    
+    # GANTI INI: Sesuaikan dengan nama image FE Anda di Docker Hub
+    DOCKERHUB_IMAGE: "daffamusyafa/english-learner-frontend"
+
   script:
-    - echo "Building image $IMAGE_NAME:$IMAGE_TAG"
-    - |
-      docker build \
-        --build-arg REACT_APP_API_URL=${PROD_API_URL} \
-        -t $IMAGE_NAME:$IMAGE_TAG .
-    - echo "Pushing image $IMAGE_NAME:$IMAGE_TAG"
-    - docker push $IMAGE_NAME:$IMAGE_TAG
+    - echo "Logging in to Docker Hub..."
+    # Gunakan Variabel CI/CD GitLab: $DOCKERHUB_USERNAME, $DOCKERHUB_TOKEN
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
     
+    - echo "Building frontend Docker image..."
+    # Pastikan Dockerfile di repo ini sudah benar untuk FE
+    - docker build -t $DOCKERHUB_IMAGE:$CI_COMMIT_SHA .
+    
+    - echo "Creating 'latest' tag..."
+    - docker tag $DOCKERHUB_IMAGE:$CI_COMMIT_SHA $DOCKERHUB_IMAGE:latest
+    
+    - echo "Pushing image to Docker Hub..."
+    - docker push $DOCKERHUB_IMAGE:$CI_COMMIT_SHA
+    - docker push $DOCKERHUB_IMAGE:latest
+  
+  # Hanya jalankan di branch 'master' (atau 'main', sesuaikan)
+  only:
+    - master
+
+# -------------------------------------------------------------------
+# TAHAP 2: DEPLOY KE VM (Untuk Front-End)
+# -------------------------------------------------------------------
+deploy_to_vm:
+  stage: deploy
+  
+  # Gunakan image yang memiliki SSH client
+  image: alpine:latest
+
+  # Perintah ini dijalankan sebelum 'script' utama
+  # Bagian ini sama persis, karena hanya menyiapkan koneksi SSH
+  before_script:
+    - 'command -v ssh-agent >/dev/null || (apk add --update openssh-client)'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  # Perintah utama untuk deployment
+  script:
+    - echo "Melakukan deployment ke VM di $SSH_HOST..."
+    
+    # Gunakan Variabel CI/CD: $SSH_USER, $SSH_HOST
+    - |
+      ssh ${SSH_USER}@${SSH_HOST} "
+        echo 'Berhasil terhubung ke VM...'
+        
+        # 1. GANTI INI: Pindah ke direktori proyek FE Anda di VM
+        #    (yang berisi file docker-compose.yml untuk FE)
+        cd /var/www/my-frontend-project
+        
+        echo 'Menarik image Docker FE terbaru dari Docker Hub...'
+        # 2. GANTI INI: Pastikan nama image ini SAMA dengan
+        #    variabel $DOCKERHUB_IMAGE di tahap build
+        docker pull daffamusyafa/english-learner-frontend:latest
+        
+        echo 'Merestart container FE dengan image baru...'
+        # 3. Jalankan ulang container Anda (asumsi pakai docker-compose)
+        docker-compose up -d --force-recreate
+        
+        # 4. (Opsional) Bersihkan image lama yang tidak terpakai
+        docker image prune -f
+        
+        echo 'Deployment FE selesai!'
+      "
+      
+  # Tentukan aturan kapan job ini harus dijalankan
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      variables:
-        IMAGE_TAG: "build-$CI_PIPELINE_IID"
-    - if: $CI_COMMIT_TAG
-      variables:
-        IMAGE_TAG: $CI_COMMIT_TAG
+    # Hanya jalankan job ini ketika ada commit ke branch 'master'
+    # Ini harus SAMA dengan job 'build' agar berjalan berurutan
+    - if: $CI_COMMIT_BRANCH == "master"
