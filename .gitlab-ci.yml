@@ -9,6 +9,12 @@ stages:
 build_and_push_to_dockerhub:
   stage: build
   
+  # ▼ PENTING: TAMBAHKAN INI ▼
+  # Memberi tahu job ini untuk mencari runner dengan tag 'docker'
+  tags:
+    - docker
+  # ▲ ------------------- ▲
+    
   # Menyediakan 'docker' CLI
   image: docker:20.10
   
