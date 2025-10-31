@@ -16,7 +16,7 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   return (
-    <div className="App" style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+    <main className="container" style={{ paddingTop: '20px' }}>
       <h1>Aplikasi Belajar Bahasa Inggris</h1>
       <Routes>
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />

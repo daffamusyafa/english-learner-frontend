@@ -88,7 +88,7 @@ function Dashboard() {
       </div>
       <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
         <h3>Kalimat Acak</h3>
-        <button onClick={handleGetRandom} style={{ padding: '10px 15px' }}>Acak Kalimat!</button>
+        <button type="button" onClick={handleGetRandom} style={{ padding: '10px 15px' }}>Acak Kalimat!</button>
         {randomSentence && (
           <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f4f4f4', borderRadius: '5px' }}>
             <h4>Kalimat terpilih:</h4>
