@@ -1,3 +1,5 @@
+/* src/App.css */
+
 /* --- Global Styles & Dark Theme --- */
 body {
   margin: 0;
@@ -14,11 +16,11 @@ body {
   background-attachment: fixed;
   background-repeat: no-repeat;
 
-  /* === PERUBAHAN CENTERING (ANTI-SCROLL) === */
+  /* === PERUBAHAN DI SINI === */
   min-height: 100vh;
   display: flex;
-  /* Hapus align-items dan justify-content */
-  padding: 40px 0; /* Beri jarak atas/bawah jika layar terlalu pendek */
+  flex-direction: column; /* Pastikan alur flex vertikal */
+  /* PADDING DIHAPUS DARI SINI, INI YANG MENYEBABKAN SCROLL */
   box-sizing: border-box;
 }
 
@@ -32,8 +34,10 @@ body {
   backdrop-filter: blur(5px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 
-  /* === INI CARA CENTERING BARUNYA === */
-  margin: auto; /* Otomatis tengah di vertikal dan horizontal */
+  /* 'margin: auto' akan membuat ini pas di tengah (vertikal & horizontal)
+     jika kontennya pendek (spt Login), dan akan nempel ke atas/bawah
+     jika kontennya panjang (spt Dashboard di HP) */
+  margin: auto;
 }
 
 /* --- Style h1 (Animasi) --- */
@@ -85,7 +89,7 @@ h2, h3 {
     box-shadow: 0 0 0 2px rgba(97, 218, 251, 0.3);
 }
 
-/* --- Button Styles (Sudah diperbaiki) --- */
+/* --- Button Styles --- */
 a.btn, button.btn {
   padding: 10px 15px;
   border: none;
@@ -144,7 +148,7 @@ hr { clear: both; border: 0; border-top: 1px solid #495057; }
   }
 }
 
-/* === 2. CLASS BARU UNTUK BOX LOGIN/REGISTER === */
+/* --- Container "Kecil Persegi" untuk Login/Register --- */
 .auth-container {
   max-width: 450px; /* Lebar "kecil persegi" */
   margin: 0 auto;   /* Posisikan di tengah .App */
