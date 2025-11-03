@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-// --- PERUBAHAN DI SINI ---
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 function Login() {
@@ -23,21 +22,33 @@ function Login() {
   };
 
   return (
-    <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
+    <div className="card">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Username: </label><br />
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required style={{ width: '95%', padding: '8px' }} />
+        <div className="form-group">
+          <label>Username:</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            className="form-input"
+          />
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Password: </label><br />
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ width: '95%', padding: '8px' }} />
+        <div className="form-group">
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="form-input"
+          />
         </div>
-        <button type="submit" style={{ padding: '10px 15px' }}>Login</button>
+        <button type="submit" className="btn btn-primary">Login</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <p>Belum punya akun? <Link to="/register">Daftar di sini</Link></p>
+      {error && <p className="message-error">{error}</p>}
+      <p>Belum punya akun? <Link to="/register" className="link">Daftar di sini</Link></p>
     </div>
   );
 }
