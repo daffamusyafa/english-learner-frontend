@@ -14,6 +14,7 @@ function Login() {
     setError('');
     try {
       const response = await axios.post(`${API_URL}/login`, { username, password });
+      // Di backend, kita ubah agar 'Bearer ' tidak ada
       localStorage.setItem('token', response.data.token);
       window.location.href = '/dashboard';
     } catch (err) {
@@ -22,34 +23,37 @@ function Login() {
   };
 
   return (
-    <div className="card">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            className="form-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="form-input"
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">Login</button>
-      </form>
-      {error && <p className="message-error">{error}</p>}
-      <p>Belum punya akun? <Link to="/register" className="link">Daftar di sini</Link></p>
-    </div>
+    /* === TAMBAHKAN PEMBUNGKUS INI === */
+    <div className="auth-container">
+      <div className="card">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Username:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label>Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="form-input"
+            />
+          </div>
+          <button type="submit" className="btn btn-primary" style={{width: "100%"}}>Login</button>
+        </form>
+        {error && <p className="message-error">{error}</p>}
+        <p style={{marginTop: '15px'}}>Belum punya akun? <Link to="/register" className="link">Daftar di sini</Link></p>
+      </div>
+    </div> /* === DAN PENUTUP INI === */
   );
 }
 

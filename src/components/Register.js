@@ -26,35 +26,38 @@ function Register() {
   };
 
   return (
-    <div className="card">
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            className="form-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="form-input"
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">Register</button>
-      </form>
-      {message && <p className="message-success">{message}</p>}
-      {error && <p className="message-error">{error}</p>}
-      <p>Sudah punya akun? <Link to="/login" className="link">Login</Link></p>
-    </div>
+    /* === TAMBAHKAN PEMBUNGKUS INI === */
+    <div className="auth-container">
+      <div className="card">
+        <h2>Register</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Username:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label>Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="form-input"
+            />
+          </div>
+          <button type="submit" className="btn btn-primary" style={{width: "100%"}}>Register</button>
+        </form>
+        {message && <p className="message-success">{message}</p>}
+        {error && <p className="message-error">{error}</p>}
+        <p style={{marginTop: '15px'}}>Sudah punya akun? <Link to="/login" className="link">Login</Link></p>
+      </div>
+    </div> /* === DAN PENUTUP INI === */
   );
 }
 
