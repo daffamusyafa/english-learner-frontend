@@ -1,105 +1,118 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // Pastikan Link di-import
 
-// API_URL sudah benar
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const getAuthApi = () => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
-    return;
-  }
-  return axios.create({
-    baseURL: API_URL,
-    headers: {
-      // ▼▼▼ INI PERUBAHANNYA ▼▼▼
-      // Kita langsung gunakan 'token' dari localStorage,
-      // karena sudah berisi "Bearer eyJ..."
-      Authorization: token
-      // ▲▲▲ SELESAI ▲▲▲
-    }
-  });
+  const token = localStorage.getItem('token');
+  if (!token) {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+    return;
+  }
+  return axios.create({
+    baseURL: API_URL,
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 };
 
 function Dashboard() {
-  const [sentence, setSentence] = useState('');
-  const [randomSentence, setRandomSentence] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [sentence, setSentence] = useState('');
+  const [randomSentence, setRandomSentence] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-  const handleAddSentence = async (e) => {
-    e.preventDefault();
-    setMessage('');
-    setError('');
-    try {
-      const api = getAuthApi();
-      await api.post('/api/sentences', { text: sentence });
-      setMessage('Kalimat berhasil ditambahkan!');
-      setSentence('');
-      setTimeout(() => setMessage(''), 3000);
-    } catch (err) {
-      // Kita buat error-nya lebih jelas
-      if (err.response && err.response.status === 401) {
-        setError('Sesi Anda habis. Silakan logout dan login kembali.');
+  const handleAddSentence = async (e) => {
+    e.preventDefault();
+    setMessage('');
+    setError('');
+    try {
+      const api = getAuthApi();
+      await api.post('/api/sentences', { text: sentence });
+      setMessage('Kalimat berhasil ditambahkan!');
+      setSentence('');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (err) {
+      setError('Gagal menambahkan kalimat.');
+    }
+  };
+
+  const handleGetRandom = async () => {
+    setMessage('');
+    setError('');
+    setRandomSentence('');
+    try {
+      const api = getAuthApi();
+      const response = await api.get('/api/sentences/random');
+      setRandomSentence(response.data.text);
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        setError('Anda belum menambahkan kalimat apapun.');
       } else {
-        setError('Gagal menambahkan kalimat.');
+        setError('Gagal mengambil kalimat acak.');
       }
-    }
-  };
+    }
+  };
 
-  const handleGetRandom = async () => {
-    setMessage('');
-    setError('');
-    setRandomSentence('');
-    try {
-      const api = getAuthApi();
-      const response = await api.get('/api/sentences/random');
-      setRandomSentence(response.data.text);
-    } catch (err) {
-      if (err.response && err.response.status === 404) {
-        setError('Anda belum menambahkan kalimat apapun.');
-      } else if (err.response && err.response.status === 401) {
-        setError('Sesi Anda habis. Silakan logout dan login kembali.');
-      } else {
-        setError('Gagal mengambil kalimat acak.');
-      }
-    }
-  };
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
-  };
+  return (
+    <div>
+      <button onClick={handleLogout} className="btn btn-danger btn-float-right">Logout</button>
+      <h2>Dashboard</h2>
+      <hr />
 
-  return (
-    <div>
-      <button onClick={handleLogout} style={{float: 'right', padding: '5px 10px'}}>Logout</button>
-      <h2>Dashboard</h2>
-      <hr style={{clear: 'both'}} />
-      <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-        <h3>Tambahkan Kalimat Baru</h3>
-        <form onSubmit={handleAddSentence}>
-          <input type="text" value={sentence} onChange={(e) => setSentence(e.target.value)} placeholder="Tulis kalimat baru di sini..." required style={{ width: '70%', padding: '8px' }} />
-          <button type="submit" style={{ padding: '9px 15px', marginLeft: '10px' }}>Tambah</button>
-        </form>
-        {message && <p style={{ color: 'green', marginTop: '10px' }}>{message}</p>}
-      </div>
-      <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
-        <h3>Kalimat Acak</h3>
-        <button type="button" onClick={handleGetRandom} style={{ padding: '10px 15px' }}>Acak Kalimat!</button>
-        {randomSentence && (
-          <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f4f4f4', borderRadius: '5px' }}>
-            <h4>Kalimat terpilih:</h4>
-            <p style={{ fontSize: '1.2em', fontWeight: 'bold' }}>"{randomSentence}"</p>
-          </div>
-        )}
-      </div>
-      {/* Tampilkan error di satu tempat saja agar konsisten */}
-      {error && <p style={{ color: 'red', marginTop: '20px', fontWeight: 'bold' }}>{error}</p>}
-    </div>
-  );
+      {/* --- INI PEMBUNGKUS GRID BARU --- */}
+      <div className="dashboard-grid">
+
+        {/* Kartu 1: Fitur Baru */}
+        <div className="card">
+          <h3>Fitur Baru!</h3>
+          <p>Coba AI Generator Kalimat Tensis kami.</p>
+          <Link to="/tenses" className="btn btn-primary">Mulai!</Link>
+        </div>
+
+        {/* Kartu 2: Tambah Kalimat */}
+        <div className="card">
+          <h3>Tambahkan Kalimat Baru</h3>
+          <form onSubmit={handleAddSentence} className="add-sentence-form">
+            <input
+              type="text"
+              value={sentence}
+              onChange={(e) => setSentence(e.target.value)}
+              placeholder="Tulis kalimat baru di sini..."
+              required
+              className="form-input"
+            />
+            <button type="submit" className="btn btn-primary">Tambah</button>
+          </form>
+          {message && <p className="message-success">{message}</p>}
+        </div>
+
+        {/* Kartu 3: Kalimat Acak */}
+        <div className="card">
+          <h3>Kalimat Acak</h3>
+          <button onClick={handleGetRandom} className="btn btn-secondary">Acak Kalimat!</button>
+          {randomSentence && (
+            <div className="random-sentence-box">
+              <h4>Kalimat terpilih:</h4>
+              <p>"{randomSentence}"</p>
+            </div>
+          )}
+        </div>
+
+      </div>
+      {/* --- INI PENUTUP GRID --- */}
+
+      {error && <p className="message-error">{error}</p>}
+    </div>
+  );
 }
 
 export default Dashboard;
