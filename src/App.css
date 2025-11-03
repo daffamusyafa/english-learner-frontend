@@ -16,13 +16,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: #f8f9fa;
 
-  background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1740');
+  background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto-format&fit=crop&w=1740');
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;
   background-repeat: no-repeat;
-  
-  /* Hapus min-height dan display:flex dari body */
 }
 
 /* === 2. JADIKAN #ROOT SEBAGAI PUSAT CENTERING === */
@@ -32,7 +30,7 @@ body {
   justify-content: center; /* Tengah Vertikal */
   align-items: center;     /* Tengah Horizontal */
   box-sizing: border-box;
-  /* Tambahkan scroll HANYA jika konten (spt di HP) lebih panjang */
+  /* Scroll HANYA jika konten (.App) lebih panjang dari layar */
   overflow-y: auto; 
 }
 
@@ -47,9 +45,9 @@ body {
   backdrop-filter: blur(5px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 
-  /* === 3. HAPUS 'margin: auto' === */
-  /* Biarkan #root yang mengatur centering */
-  margin: 20px 0; /* Beri sedikit margin atas/bawah */
+  /* === 3. HAPUS 'margin: 20px 0' DARI SINI === */
+  /* Biarkan #root (flex container) yang mengatur centering */
+  margin: 0; 
 }
 
 /* --- Style h1 (Animasi) --- */
@@ -65,6 +63,7 @@ h1 {
   -webkit-background-clip: text;
   background-clip: text;
   animation: moveGradient 5s linear infinite;
+  margin-top: 0; /* Pastikan h1 tidak menambah margin atas */
 }
 
 h2, h3 {
@@ -79,7 +78,8 @@ h2, h3 {
   background-color: #2c3036;
   padding: 20px;
   border-radius: 8px;
-  margin-bottom: 20px;
+  /* Hapus margin-bottom default agar grid yg atur */
+  margin-bottom: 0; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -152,7 +152,7 @@ hr { clear: both; border: 0; border-top: 1px solid #495057; }
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 20px; /* Ini akan jadi jarak antar kartu */
 }
 @media (min-width: 900px) {
   .dashboard-grid {
@@ -164,4 +164,8 @@ hr { clear: both; border: 0; border-top: 1px solid #495057; }
 .auth-container {
   max-width: 450px; 
   margin: 0 auto;
+}
+/* Pastikan card di auth-container tidak punya margin-bottom */
+.auth-container .card {
+  margin-bottom: 0;
 }
