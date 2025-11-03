@@ -1,8 +1,7 @@
 /* src/App.css */
 
-/* === 1. PAKSA HTML, BODY, DAN #ROOT JADI FULL HEIGHT === */
+/* === 1. HAPUS 'height: 100%' DARI SINI === */
 html, body, #root {
-  height: 100%;
   margin: 0;
   padding: 0;
 }
@@ -23,15 +22,16 @@ body {
   background-repeat: no-repeat;
 }
 
-/* === 2. JADIKAN #ROOT SEBAGAI PUSAT CENTERING === */
+/* === 2. GANTI STRATEGI CENTERING #ROOT === */
 #root {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Tengah Vertikal */
-  align-items: center;     /* Tengah Horizontal */
-  box-sizing: border-box;
-  /* Scroll HANYA jika konten (.App) lebih panjang dari layar */
-  overflow-y: auto; 
+  /* Hapus semua 'flex' dan 'justify-content' */
+  
+  /* Pastikan #root setidaknya setinggi layar */
+  min-height: 100vh;
+  box-sizing: border-box; /* Agar padding tidak menambah tinggi */
+  
+  /* Ini adalah 'gap' atas yang Anda minta */
+  padding: 8vh 0; 
 }
 
 
@@ -45,9 +45,9 @@ body {
   backdrop-filter: blur(5px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 
-  /* === 3. HAPUS 'margin: 20px 0' DARI SINI === */
-  /* Biarkan #root (flex container) yang mengatur centering */
-  margin: 0; 
+  /* === 3. KEMBALIKAN 'margin: 0 auto' === */
+  /* Ini untuk centering HORIZONTAL */
+  margin: 0 auto; 
 }
 
 /* --- Style h1 (Animasi) --- */
@@ -63,7 +63,7 @@ h1 {
   -webkit-background-clip: text;
   background-clip: text;
   animation: moveGradient 5s linear infinite;
-  margin-top: 0; /* Pastikan h1 tidak menambah margin atas */
+  margin-top: 0;
 }
 
 h2, h3 {
@@ -72,13 +72,12 @@ h2, h3 {
   padding-bottom: 10px;
 }
 
-/* --- Card Components (Login, Register, Dashboard sections) --- */
+/* --- Card Components --- */
 .card {
   border: 1px solid #495057;
   background-color: #2c3036;
   padding: 20px;
   border-radius: 8px;
-  /* Hapus margin-bottom default agar grid yg atur */
   margin-bottom: 0; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -152,7 +151,7 @@ hr { clear: both; border: 0; border-top: 1px solid #495057; }
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px; /* Ini akan jadi jarak antar kartu */
+  gap: 20px;
 }
 @media (min-width: 900px) {
   .dashboard-grid {
@@ -165,7 +164,6 @@ hr { clear: both; border: 0; border-top: 1px solid #495057; }
   max-width: 450px; 
   margin: 0 auto;
 }
-/* Pastikan card di auth-container tidak punya margin-bottom */
 .auth-container .card {
   margin-bottom: 0;
 }
