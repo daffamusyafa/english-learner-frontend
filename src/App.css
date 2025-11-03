@@ -8,58 +8,67 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #282c34; /* HITAM - Latar Belakang Utama */
   color: #f8f9fa; /* Teks putih/terang */
+
+  /* === PERUBAHAN 1: BACKGROUND BARU === */
+  /* Ganti gambar '...w=1740' ini jika Anda mau gambar lain */
+  background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1740');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed; /* Bikin gambar diam */
+  background-repeat: no-repeat;
+
+  /* === PERUBAHAN 2: BUAT KONTEN PAS DI TENGAH LAYAR === */
+  min-height: 100vh; /* Minimal setinggi layar */
+  display: flex;
+  align-items: center;     /* Tengah Vertikal */
+  justify-content: center; /* Tengah Horizontal */
+  padding: 20px 0; /* Beri padding atas/bawah jika konten lebih tinggi */
+  box-sizing: border-box;
 }
 
 /* --- App Container --- */
 .App {
-  max-width: 1200px; /* <-- LEBIH LEBAR */
-  width: 90%;       /* <-- Responsif */
-  margin: 40px auto;
+  /* === PERUBAHAN 3: KONTEN LEBIH KECIL/RINGKAS === */
+  max-width: 1000px; /* Ukuran maksimal lebih kecil */
+  width: 90%;
+  
+  /* margin: 40px auto; <-- Dihapus, 'body' (flex) yg urus centering */
   padding: 20px;
   border-radius: 8px;
-  background-color: #343a40; /* HITAM - Latar Konten */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  
+  /* === PERUBAHAN 4: BIKIN KARTU SEDIKIT TRANSPARAN === */
+  background-color: rgba(52, 58, 64, 0.9); /* 90% Opacity */
+  backdrop-filter: blur(5px); /* Efek 'glass' (opsional) */
+  
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* --- Pisahkan h1 dari h2, h3 --- */
-h2, h3 {
-  color: #61dafb; /* BIRU - Aksen untuk judul */
-  border-bottom: 2px solid #495057;
-  padding-bottom: 10px;
-}
-
-/* --- Style baru untuk h1 (Animasi) --- */
+/* --- Style h1 (Animasi) --- */
 h1 {
   text-align: center;
   font-size: 2.5em; 
   font-weight: bold;
-  
-  /* --- EFEK GRADASI WARNA-WARNI --- */
   background: linear-gradient(to right,
-    #61dafb, /* Biru */
-    #e06c75, /* Merah */
-    #98c379, /* Hijau */
-    #e5c07b, /* Kuning */
-    #61dafb  /* Balik ke Biru */
+    #61dafb, #e06c75, #98c379, #e5c07b, #61dafb
   );
-  background-size: 200% auto; /* Bikin gradasi 2x lebih lebar */
-  color: transparent; /* Sembunyikan warna teks asli */
-  
-  /* Klip/potong background SEBENTUK teksnya */
+  background-size: 200% auto;
+  color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
-  
-  /* Terapkan animasi! */
   animation: moveGradient 5s linear infinite;
 }
 
+h2, h3 {
+  color: #61dafb;
+  border-bottom: 2px solid #495057;
+  padding-bottom: 10px;
+}
 
 /* --- Card Components (Login, Register, Dashboard sections) --- */
 .card {
   border: 1px solid #495057;
-  background-color: #2c3036; /* HITAM - Latar card */
+  background-color: #2c3036;
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -67,30 +76,20 @@ h1 {
 }
 
 /* --- Form & Input Styles --- */
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #adb5bd; /* Abu-abu terang */
-}
-
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #adb5bd; }
 .form-input {
   width: 95%;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #495057;
-  background-color: #343a40; /* HITAM - Latar input */
-  color: #f8f9fa; /* Teks input putih */
+  background-color: #343a40;
+  color: #f8f9fa;
   font-size: 1em;
 }
-
 .form-input:focus {
     outline: none;
-    border-color: #61dafb; /* BIRU - Aksen saat fokus */
+    border-color: #61dafb;
     box-shadow: 0 0 0 2px rgba(97, 218, 251, 0.3);
 }
 
@@ -104,116 +103,52 @@ h1 {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
-
-.btn-primary {
-  background-color: #007bff; /* BIRU - Tombol utama */
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3; /* BIRU - Lebih gelap */
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-}
-
-.btn-danger {
-  background-color: #dc3545; /* MERAH - Tombol logout/error */
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #c82333; /* MERAH - Lebih gelap */
-}
-
-.btn-float-right {
-  float: right;
-}
+.btn-primary { background-color: #007bff; color: white; }
+.btn-primary:hover { background-color: #0056b3; }
+.btn-secondary { background-color: #6c757d; color: white; }
+.btn-secondary:hover { background-color: #5a6268; }
+.btn-danger { background-color: #dc3545; color: white; }
+.btn-danger:hover { background-color: #c82333; }
+.btn-float-right { float: right; }
 
 /* --- Message & Link Styles --- */
-.message-success {
-  color: #28a745; /* Hijau untuk sukses */
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.message-error {
-  color: #e06c75; /* MERAH - Teks error */
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.link {
-  color: #61dafb; /* BIRU - Link */
-  text-decoration: none;
-}
-
-.link:hover {
-  text-decoration: underline;
-}
-
-p {
-  color: #adb5bd;
-}
+.message-success { color: #28a745; margin-top: 10px; font-weight: bold; }
+.message-error { color: #e06c75; margin-top: 10px; font-weight: bold; }
+.link { color: #61dafb; text-decoration: none; }
+.link:hover { text-decoration: underline; }
+p { color: #adb5bd; }
 
 /* --- Dashboard Specifics --- */
-.add-sentence-form {
-  display: flex;
-  gap: 10px;
-}
-.add-sentence-form .form-input {
-  flex-grow: 1; /* Input memanjang */
-  width: auto; /* Override width 95% */
-}
-.add-sentence-form .btn {
-  flex-shrink: 0; /* Tombol tidak mengecil */
-}
-
+.add-sentence-form { display: flex; gap: 10px; }
+.add-sentence-form .form-input { flex-grow: 1; width: auto; }
+.add-sentence-form .btn { flex-shrink: 0; }
 .random-sentence-box {
   margin-top: 20px;
   padding: 15px;
-  background-color: #282c34; /* HITAM - Latar boks kalimat acak */
+  background-color: #282c34;
   border-radius: 5px;
-  border-left: 5px solid #007bff; /* BIRU - Aksen */
+  border-left: 5px solid #007bff;
 }
+.random-sentence-box h4 { margin-top: 0; color: #f8f9fa; }
+.random-sentence-box p { font-size: 1.2em; font-weight: bold; color: #ffffff; margin-bottom: 0; }
+hr { clear: both; border: 0; border-top: 1px solid #495057; }
 
-.random-sentence-box h4 {
-  margin-top: 0;
-  color: #f8f9fa;
-}
-
-.random-sentence-box p {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #ffffff;
-  margin-bottom: 0;
-}
-
-hr {
-    clear: both;
-    border: 0;
-    border-top: 1px solid #495057;
-}
-
-/* --- Animasi untuk menggerakkan gradasi di h1 --- */
+/* --- Animasi Gradasi h1 --- */
 @keyframes moveGradient {
   0% { background-position: 0% center; }
   100% { background-position: 200% center; }
 }
 
-/* --- Layout Grid untuk Dashboard --- */
+/* === PERUBAHAN 5: GRID DIBUAT RESPONSIVE === */
 .dashboard-grid {
   display: grid;
-  /* Buat kolom otomatis: 
-    - Coba paskan sebanyak mungkin kolom
-    - Setiap kolom minimal 350px, maks 1fr (bagi rata)
-  */
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px; /* Jarak antar kartu */
+  grid-template-columns: 1fr; /* Default 1 kolom (Mobile) */
+  gap: 20px;
+}
+
+/* Jika layar lebar (di atas 900px), baru pakai 3 kolom */
+@media (min-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
